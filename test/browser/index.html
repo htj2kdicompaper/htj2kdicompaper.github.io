@@ -15,10 +15,9 @@ SPDX-License-Identifier: MIT
 <body>
   <div class="container">
     <div class="page-header">
-      <h1>HTJ2K/JPH Decoding with WebAssembly (v<span id="version"></span>)</h1>
+      <h1>DICOM Viewer</h1>
       <p class="lead">
-        Select an image or drag and drop a HTJ2K/JPH file. Files dropped here remain local in your browser, they are not
-        uploaded anywhere.
+        HTJ2K as a Default Format for Medical Images
       </p>
       <div class="row">
         <select id="imageSelector">
@@ -57,49 +56,25 @@ SPDX-License-Identifier: MIT
     <div class="row">
       <div class="col-md-4">Encode Time: <span id="encodeTime"></span></div>
       <div class="col-md-4">Decode Time: <span id="decodeTime"></span></div>
-      <div class="col-md-4">Display Time: <span id="displayTime"></span></div>
     </div>
     <div class="row">
       <div class="col-md-4">Encoded Size: <span id="encodedSize"></span></div>
-      <div class="col-md-4">Decoded Size: <span id="decodedSize"></span></div>
       <div class="col-md-4">Compression Ratio: <span id="compressionRatio"></span></div>
     </div>
     <div class="row">
       <div class="col-md-4">Resolution: <span id="resolution"></span></div>
       <div class="col-md-4">Pixel Format: <span id="pixelFormat"></span></div>
-      <div class="col-md-4">Component Count: <span id="componentCount"></span></div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">Min Pixel: <span id="minPixel"></span></div>
-      <div class="col-md-4">Max Pixel: <span id="maxPixel"></span></div>
-      <div class="col-md-4">Dynamic Range: <span id="dynamicRange"></span></div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">Image Offset: <span id="imageOffset"></span></div>
-      <div class="col-md-4">Tile Size: <span id="tileSize"></span></div>
-      <div class="col-md-4">Tile Offset: <span id="tileOffset"></span></div>
     </div>
     <div class="row">
       <div class="col-md-4">Decompositions: <span id="numDecompositions"></span></div>
       <div class="col-md-4">Block Dimensions: <span id="blockDimensions"></span></div>
-      <div class="col-md-4">Reversible: <span id="reversible"></span></div>
     </div>
     <div class="row">
       <div class="col-md-4">Progression Order: <span id="progessionOrder"></span></div>
       <div class="col-md-4">Num Layers: <span id="numLayers"></span></div>
-      <div class="col-md-4">Color Transform: <span id="colorTransform"></span></div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">Downsampling: <span id="downSampling"></span></div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">Precincts: <span id="precincts"></span></div>
     </div>
     <div class="row">
       <div class="col-md-12">Sub Resolutions: <span id="subResolutions"></span></div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">CRC32: <span id="crc32"></span></div>
     </div>
 
     <hr>
@@ -128,22 +103,12 @@ SPDX-License-Identifier: MIT
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12">
-        <span>Lossy Quantization Factor: </span><span id="quantization">0.0000</span>
-        <input type="range" class="custom-range" id="quantizationRange" min="0" max="1000" value="0">
-      </div>
-    </div>
-    <div class="row">
 
       <div class="col-md-12">
         <button id="download">Download</button>
         Progression Order:
         <select id="progressionOrderSelector">
-          <option value="0">LRCP</option>
-          <option value="1">RLCP</option>
           <option value="2" selected>RPCL</option>
-          <option value="3">PCRL</option>
-          <option value="4">CPRL</option>
         </select>
         Decompositions:
         <select id="decompositionsSelector">
@@ -165,12 +130,6 @@ SPDX-License-Identifier: MIT
           <option value="32x32">32</option>
           <option value="64x64" selected>64</option>
         </select>
-        Set TLM Marker:
-        <input type="checkbox" id="setTLMMarkerSelector">
-        Set tile part divisions at resolutions:
-        <input type="checkbox" id="setTilePartDivisionsAtResolutionsSelector">
-        Set tile part divisions at components:
-        <input type="checkbox" id="setTilePartDivisionsAtComponentsSelector">
       </div>
     </div>
     <div class="row">
@@ -466,7 +425,7 @@ var calccrc32 = function(str) {
 
     let subResolutions = '';
     for (let i = 0; i < decoder.getNumDecompositions(); i++) {
-      const resolution = decoder.calculateSizeAtDecompositionLevel(i+1);
+      const resolution = decoder.calculateSizeAtDecompositionLevel(i);
       subResolutions += resolution.width + 'x' + resolution.height + ' ';
     }
     $('#subResolutions').text('' + subResolutions);
